@@ -5,55 +5,120 @@
   <title>School Bus Dashboard</title>
 
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
   <style>
-    #map {
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
       height: 100vh;
-      width: 100%;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 70%;
+      height: 100%;
+    }
+
+    #panel {
+      width: 30%;
+      background: #f5f5f5;
+      padding: 20px;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .infoBox {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      font-size: 18px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #444;
     }
   </style>
-</head>
-
-<body>
-  <div id="map"></div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <script>
-    // Δημιουργία χάρτη
-    var map = L.map('map').setView([37.9838, 23.7275], 13);
+</head>
+<body>
 
-    // Φόρτωση πλακιδίων OpenStreetMap
+  <div id="map"></div>
+
+  <div id="panel">
+    <div class="title">School Bus Dashboard</div>
+
+    <div class="infoBox">
+      <span class="label">Speed:</span>
+      <span id="speed">--</span> km/h
+    </div>
+
+    <div class="infoBox">
+      <span class="label">Alcohol:</span>
+      <span id="alcohol">--</span>
+    </div>
+
+    <div class="infoBox">
+      <span class="label">Acceleration:</span>
+      <span id="acc">--</span>
+    </div>
+
+    <div class="infoBox">
+      <span class="label">Last Update:</span>
+      <span id="time">--</span>
+    </div>
+  </div>
+
+  <script>
+    // Initialize map
+    let map = L.map('map').setView([38.0, 23.7], 14);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Marker για το σχολικό
-    var busMarker = L.marker([37.9838, 23.7275]).addTo(map);
+    // Marker
+    let marker = L.marker([38.0, 23.7]).addTo(map);
 
-    // Συνάρτηση για ενημέρωση θέσης
-    function updateBusLocation() {
+    // Fetch data from Apps Script
+    function fetchData() {
       fetch("https://script.google.com/macros/s/AKfycbz58X2d8UBo6YkX3cVNCOfXPhhtudIhzx6CZgClA1S1uEBt_dkze_Fy40F9j_5NNTLYgw/exec?action=getLatest")
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-          if (data && data.latitude && data.longitude) {
-            var lat = parseFloat(data.latitude);
-            var lng = parseFloat(data.longitude);
+          const lat = parseFloat(data.latitude);
+          const lng = parseFloat(data.longitude);
 
-            busMarker.setLatLng([lat, lng]);
-            map.setView([lat, lng]);
-          }
+          marker.setLatLng([lat, lng]);
+          map.setView([lat, lng]);
+
+          document.getElementById("speed").innerText = data.speed;
+          document.getElementById("alcohol").innerText = data.alcohol;
+          document.getElementById("acc").innerText = data.acc;
+          document.getElementById("time").innerText = data.timestamp;
         })
-        .catch(err => console.error("Error fetching location:", err));
+        .catch(err => {
+          console.error("Fetch error:", err);
+        });
     }
 
-    // Ενημέρωση κάθε 5 δευτερόλεπτα
-    setInterval(updateBusLocation, 5000);
-    updateBusLocation();
+    fetchData();
+    setInterval(fetchData, 3000);
   </script>
+
 </body>
 </html>
+
 
