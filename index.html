@@ -36,7 +36,7 @@
 
     // Συνάρτηση για ενημέρωση θέσης
     function updateBusLocation() {
-      fetch("https://script.google.com/macros/s/AKfycbxZypkFrLVXh0gKWjdaUFOFHkmyQ1baT90znLbLvXNv7XhXM_25oqriw8zLwhzZfSEu/exec?action=getLatest")
+      fetch("https://script.google.com/macros/s/AKfycbz58X2d8UBo6YkX3cVNCOfXPhhtudIhzx6CZgClA1S1uEBt_dkze_Fy40F9j_5NNTLYgw/exec?action=getLatest")
         .then(response => response.json())
         .then(data => {
           if (data && data.latitude && data.longitude) {
