@@ -3,5 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <title>School Bus Dashboard</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // Δημιουργία χάρτη
+    var map = L.map('map').setView([37.9838, 23.7275], 13);
+
+    // Φόρτωση πλακιδίων OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Marker για το σχολικό
+    var busMarker = L.marker([37.9838, 23.7275]).addTo(map);
+
+    // Συνάρτηση για ενημέρωση θέσης
+    function updateBusLocation() {
+      fetch("https://script.google.com/macros/s/AKfycbxZypkFrLVXh0gKWjdaUFOFHkmyQ1baT90znLbLvXNv7XhXM_25oqriw8zLwhzZfSEu/exec?action=getLatest")
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.latitude && data.longitude) {
+            var lat = parseFloat(data.latitude);
+            var lng = parseFloat(data.longitude);
+
+            busMarker.setLatLng([lat, lng]);
+            map.setView([lat, lng]);
+          }
+        })
+        .catch(err => console.error("Error fetching location:", err));
+    }
+
+    // Ενημέρωση κάθε 5 δευτερόλεπτα
+    setInterval(updateBusLocation, 5000);
+    updateBusLocation();
+  </script>
 </body>
 </html>
+
