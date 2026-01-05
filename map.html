@@ -95,7 +95,7 @@
 
     // Fetch data from Apps Script
     function fetchData() {
-      fetch("https://script.google.com/macros/s/AKfycbx1Lr1vIAV9iwR9lSyiZ0VsaRJiZLOumQIs_odFjRGfNuern0UsZAKyt9urG-mWnWZP-A/exec?action=getLatest")
+      fetch("https://script.google.com/macros/s/AKfycbyBGZd0y-GF17_L9vt6GfYV5Z-eEQOYRrl3dOxhK8_heEqEU9Spnl8ErAwpozd2EhL7GQ/exec?action=getLatest")
         .then(res => res.json())
         .then(data => {
           const lat = parseFloat(data.latitude);
